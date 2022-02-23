@@ -31,14 +31,14 @@ class DrawerItem extends ConsumerWidget {
 
     if (setting == null) {
       throw Exception(
-        '''ShowTileSetting cannot be null. Did you forgot to override [showTileSettingPro] provider?''',
+        '''DrawerTileSetting cannot be null. Did you forgot to override [drawerItemSettingPro] provider?''',
       );
     }
     return Container(
       margin: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          color: Colors.black.withOpacity(.8),
+          color: Colors.transparent.withOpacity(.7),
           borderRadius: BorderRadius.circular(4)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -54,7 +54,7 @@ class DrawerItem extends ConsumerWidget {
           const SizedBox(height: 15),
           RichText(
             text: TextSpan(
-              text: 'Lat',
+              text: 'Lat  ',
               children: [
                 TextSpan(
                   text: setting.lat,
@@ -69,7 +69,7 @@ class DrawerItem extends ConsumerWidget {
           const SizedBox(height: 5),
           RichText(
             text: TextSpan(
-              text: 'Long',
+              text: 'Long  ',
               children: [
                 TextSpan(
                   text: setting.lng,

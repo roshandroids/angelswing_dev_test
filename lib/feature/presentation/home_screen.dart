@@ -1,5 +1,9 @@
+import 'package:angelswing_dev_test/core/utils/permission/permission_status_provider.dart';
+import 'package:angelswing_dev_test/feature/application/application.dart';
+import 'package:angelswing_dev_test/feature/infrastructure/infrastructure.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_item.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_status_notifier.dart';
+import 'package:angelswing_dev_test/feature/presentation/widgets/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,8 +14,28 @@ class HomeScreen extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+    checkPermission();
+    ref.read(getAllLocationController.notifier).getLocations();
+  }
+
+  void checkPermission() {
+    ref.read(permissionStatusProvider.notifier).checkPermission(context);
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      checkPermission();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,29 +67,57 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ref.read(drawerStatusProvider.notifier).changeStatus(status),
         key: _scaffoldKey,
         drawer: Drawer(
-          backgroundColor: Colors.transparent.withOpacity(.1),
-          child: ListView.builder(
-            itemCount: 5,
-            itemBuilder: (context, item) {
-              return ProviderScope(
-                overrides: [
-                  drawerItemSettingPro.overrideWithValue(
-                      const DrawerItemSetting(
-                          title: 'title', lat: 'lat', lng: 'lng')),
-                ],
-                child: const DrawerItem(),
+          backgroundColor: Colors.transparent.withOpacity(.2),
+          child: Consumer(
+            builder: (context, ref, child) {
+              final state = ref.watch(getAllLocationController);
+              return state.maybeMap(
+                loading: (_) => ListView.separated(
+                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                  itemCount: 5,
+                  separatorBuilder: (context, item) {
+                    return const SizedBox(
+                      height: 10,
+                    );
+                  },
+                  itemBuilder: (context, index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white.withOpacity(.5)),
+                      height: 100,
+                      width: 100,
+                    );
+                  },
+                ),
+                success: (s) {
+                  final data = s.data as Locationresponse;
+
+                  return ListView.builder(
+                    itemCount: data.locations.length,
+                    itemBuilder: (context, index) {
+                      final item = data.locations[index];
+                      return ProviderScope(
+                        overrides: [
+                          drawerItemSettingPro.overrideWithValue(
+                            DrawerItemSetting(
+                              title: 'Location ${index + 1}',
+                              lat: item[0].toString(),
+                              lng: item[1].toString(),
+                            ),
+                          ),
+                        ],
+                        child: const DrawerItem(),
+                      );
+                    },
+                  );
+                },
+                orElse: () => const SizedBox(),
               );
             },
           ),
         ),
-        body: Column(
-          children: List.generate(
-            10,
-            (index) => Text(
-              index.toString(),
-            ),
-          ),
-        ),
+        body: const MapView(),
       ),
     );
   }

@@ -4,9 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final getAllLocationController =
-    StateNotifierProvider<LocationController, BaseState>(homeController);
+    StateNotifierProvider<LocationController, BaseState>(locationController);
 
-LocationController homeController<T>(Ref ref) {
+LocationController locationController<T>(Ref ref) {
   final cancelToken = CancelToken();
   ref.onDispose(cancelToken.cancel);
   return LocationController<T>(ref.read, cancelToken: cancelToken);
@@ -24,7 +24,7 @@ class LocationController<T> extends StateNotifier<BaseState> {
   ILocationRepository get _locationRepository =>
       _read(locationRepositoryProvider);
 
-  Future<void> getAllContestants({
+  Future<void> getLocations({
     String? keyword,
     bool isActive = true,
     int? skipCount,

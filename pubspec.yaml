@@ -23,6 +23,14 @@ dependencies:
   freezed_annotation: ^1.1.0
   json_annotation: ^4.4.0
 
+  # Map & Markers
+  google_maps_flutter: ^2.1.1
+
+  # Local storage
+  shared_preferences: ^2.0.13
+
+  # Permission checker
+  permission_handler: ^9.2.0
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
