@@ -1,5 +1,6 @@
 import 'package:angelswing_dev_test/core/utils/consts.dart';
 import 'package:angelswing_dev_test/core/utils/permission/permission_status_provider.dart';
+import 'package:angelswing_dev_test/feature/presentation/widgets/custom_icon_button.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,23 +19,24 @@ class _MapViewState extends ConsumerState<MapView> {
   @override
   Widget build(BuildContext context) {
     final markerPro = ref.watch(markersProvider);
-
     final markers = ref.watch(markersProvider).markers;
+    final currentFocus = ref.watch(permissionStatusProvider).currentPosition;
+
     return Scaffold(
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Spacer(flex: 3),
-          GestureDetector(
+          CustomIconButton(
             onTap: () async {
-              ref
+              final position = await ref
                   .read(permissionStatusProvider.notifier)
-                  .checkPermission(context);
-              if (ref.read(permissionStatusProvider).hasPermission) {
-                final position = await Geolocator.getCurrentPosition(
-                    desiredAccuracy: LocationAccuracy.high);
+                  .getLocation(context);
+              if (position != null) {
                 final marker = Marker(
+                  infoWindow: InfoWindow(
+                      title: '${position.latitude},${position.longitude}'),
                   markerId:
                       MarkerId('${position.latitude},${position.latitude}'),
                   position: LatLng(position.latitude, position.longitude),
@@ -48,43 +50,31 @@ class _MapViewState extends ConsumerState<MapView> {
                     .addLocation(LatLng(position.latitude, position.longitude));
               }
             },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xff0600EE),
-              ),
-              child: const Icon(
-                Entypo.location_pin,
-                color: Colors.white,
-              ),
+            icon: const Icon(
+              Entypo.location_pin,
+              color: Colors.white,
             ),
+            color: const Color(0xff0600EE),
           ),
           const Spacer(flex: 2),
-          GestureDetector(
+          CustomIconButton(
             onTap: () async {
-              ref
+              final position = await ref
                   .read(permissionStatusProvider.notifier)
-                  .checkPermission(context);
-              if (ref.read(permissionStatusProvider).hasPermission) {
+                  .getLocation(context);
+              if (position != null) {
                 final position = await Geolocator.getCurrentPosition(
                     desiredAccuracy: LocationAccuracy.high);
                 ref.read(markersProvider.notifier).animateCamera(
                     LatLng(position.latitude, position.longitude));
               }
             },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Color(0xff193968),
-              ),
-              child: const Icon(
-                Ionicons.ios_navigate,
-                color: Colors.white,
-                size: 20,
-              ),
+            icon: const Icon(
+              Ionicons.ios_navigate,
+              color: Colors.white,
+              size: 20,
             ),
+            color: const Color(0xff193968),
           ),
         ],
       ),
@@ -102,44 +92,61 @@ class _MapViewState extends ConsumerState<MapView> {
             markers: markers,
             onMapCreated: (controller) =>
                 ref.read(markersProvider.notifier).initController(controller),
+            onCameraMove: (CameraPosition position) => ref
+                .read(permissionStatusProvider.notifier)
+                .updateFocus(position),
           ),
           Positioned(
             right: 20,
             top: 20,
             child: Column(
               children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(
-                        0xff3F4447,
-                      ),
-                    ),
-                    child: const Icon(
-                      Entypo.plus,
-                      color: Colors.white,
-                    ),
+                CustomIconButton(
+                  onTap: () async {
+                    final _mapController =
+                        ref.read(markersProvider).mapsController;
+
+                    if (currentFocus != null) {
+                      final currentZoomLevel =
+                          await _mapController.getZoomLevel();
+
+                      await _mapController.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: currentFocus.target,
+                            zoom: currentZoomLevel + .5,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Entypo.plus, color: Colors.white),
+                  color: const Color(
+                    0xff3F4447,
                   ),
                 ),
                 const SizedBox(height: 20),
-                GestureDetector(
-                  onTap: () async {},
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(
-                        0xff3F4447,
-                      ),
-                    ),
-                    child: const Icon(
-                      Entypo.minus,
-                      color: Colors.white,
-                    ),
-                  ),
+                CustomIconButton(
+                  onTap: () async {
+                    final _mapController =
+                        ref.read(markersProvider).mapsController;
+
+                    if (currentFocus != null) {
+                      final currentZoomLevel =
+                          await _mapController.getZoomLevel();
+
+                      await _mapController.animateCamera(
+                        CameraUpdate.newCameraPosition(
+                          CameraPosition(
+                            target: currentFocus.target,
+                            zoom: currentZoomLevel - .5,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Entypo.minus, color: Colors.white),
+                  color: const Color(0xff3F4447),
                 ),
               ],
             ),

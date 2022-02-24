@@ -40,6 +40,7 @@ class LocationController<T> extends StateNotifier<BaseState> {
         final markers = data.locations
             .map(
               (e) => Marker(
+                infoWindow: InfoWindow(title: '${e[0]},${e[1]}'),
                 markerId: MarkerId('${e[0]},${e[1]}'),
                 position: LatLng(e[0], e[1]),
               ),
