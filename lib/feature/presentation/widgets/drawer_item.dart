@@ -1,5 +1,10 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 
 ///  Drawer Item provider
 final drawerItemSettingPro = Provider<DrawerItemSetting?>((ref) => null);
@@ -8,18 +13,17 @@ final drawerItemSettingPro = Provider<DrawerItemSetting?>((ref) => null);
 class DrawerItemSetting {
   const DrawerItemSetting({
     required this.title,
-    required this.lat,
-    required this.lng,
+    required this.latLng,
+    required this.isLastItem,
   });
 
   ///Drawer Item title
   final String title;
 
-  ///Drawer Item lat
-  final String lat;
+  /// Lat & Long
+  final LatLng latLng;
 
-  ///Drawer Item lng
-  final String lng;
+  final bool isLastItem;
 }
 
 class DrawerItem extends ConsumerWidget {
@@ -34,54 +38,60 @@ class DrawerItem extends ConsumerWidget {
         '''DrawerTileSetting cannot be null. Did you forgot to override [drawerItemSettingPro] provider?''',
       );
     }
-    return Container(
-      margin: const EdgeInsets.only(left: 10, right: 10, top: 15, bottom: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          color: Colors.transparent.withOpacity(.7),
-          borderRadius: BorderRadius.circular(4)),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            setting.title,
-            style: Theme.of(context)
-                .textTheme
-                .bodySmall
-                ?.copyWith(color: Colors.white),
+    return InkWell(
+      onTap: () {
+        ref.read(markersProvider.notifier).animateCamera(setting.latLng);
+        Navigator.of(context).pop();
+      },
+      child: Card(
+        margin: const EdgeInsets.only(left: 10, right: 10, top: 20, bottom: 10),
+        elevation: 2,
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: setting.isLastItem
+                  ? Colors.blue[100]
+                  : Colors.grey.withOpacity(.3),
+              borderRadius: BorderRadius.circular(4)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                setting.title,
+                style: Theme.of(context).textTheme.bodyText1,
+              ),
+              const SizedBox(height: 15),
+              RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  text: 'Lat  ',
+                  children: [
+                    TextSpan(
+                      text:
+                          '${setting.latLng.latitude.toString()} ${setting.isLastItem ? '(marker long)' : ''}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 5),
+              RichText(
+                text: TextSpan(
+                  text: 'Long  ',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  children: [
+                    TextSpan(
+                      text:
+                          "${setting.latLng.longitude.toString()} ${setting.isLastItem ? '(marker long)' : ''}",
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 15),
-          RichText(
-            text: TextSpan(
-              text: 'Lat  ',
-              children: [
-                TextSpan(
-                  text: setting.lat,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.white),
-                )
-              ],
-            ),
-          ),
-          const SizedBox(height: 5),
-          RichText(
-            text: TextSpan(
-              text: 'Long  ',
-              children: [
-                TextSpan(
-                  text: setting.lng,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.white),
-                )
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

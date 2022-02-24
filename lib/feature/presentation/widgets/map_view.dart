@@ -1,4 +1,5 @@
 import 'package:angelswing_dev_test/core/utils/consts.dart';
+import 'package:angelswing_dev_test/core/utils/permission/permission_status_provider.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,11 +15,10 @@ class MapView extends ConsumerStatefulWidget {
 }
 
 class _MapViewState extends ConsumerState<MapView> {
-  late GoogleMapController mapsController;
-  Set<Marker> markers = {};
-
   @override
   Widget build(BuildContext context) {
+    final markerPro = ref.watch(markersProvider);
+
     final markers = ref.watch(markersProvider).markers;
     return Scaffold(
       floatingActionButton: Row(
@@ -28,20 +28,31 @@ class _MapViewState extends ConsumerState<MapView> {
           const Spacer(flex: 3),
           GestureDetector(
             onTap: () async {
-              final position = await Geolocator.getCurrentPosition(
-                  desiredAccuracy: LocationAccuracy.high);
-              final marker = Marker(
-                markerId: MarkerId('${position.latitude},${position.latitude}'),
-                position: LatLng(position.latitude, position.longitude),
-              );
-              final newMarkers = markers..add(marker);
-              ref.read(markersProvider.notifier).updateMarkersList(newMarkers);
+              ref
+                  .read(permissionStatusProvider.notifier)
+                  .checkPermission(context);
+              if (ref.read(permissionStatusProvider).hasPermission) {
+                final position = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high);
+                final marker = Marker(
+                  markerId:
+                      MarkerId('${position.latitude},${position.latitude}'),
+                  position: LatLng(position.latitude, position.longitude),
+                );
+                final newMarkers = markerPro.markers..add(marker);
+                ref
+                    .read(markersProvider.notifier)
+                    .updateMarkersList(newMarkers, markerPro.listLocations);
+                ref
+                    .read(markersProvider.notifier)
+                    .addLocation(LatLng(position.latitude, position.longitude));
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xff193968),
+                color: Color(0xff0600EE),
               ),
               child: const Icon(
                 Entypo.location_pin,
@@ -52,14 +63,15 @@ class _MapViewState extends ConsumerState<MapView> {
           const Spacer(flex: 2),
           GestureDetector(
             onTap: () async {
-              final position = await Geolocator.getCurrentPosition(
-                  desiredAccuracy: LocationAccuracy.high);
-              await mapsController.animateCamera(CameraUpdate.newCameraPosition(
-                CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
-                  zoom: 16,
-                ),
-              ));
+              ref
+                  .read(permissionStatusProvider.notifier)
+                  .checkPermission(context);
+              if (ref.read(permissionStatusProvider).hasPermission) {
+                final position = await Geolocator.getCurrentPosition(
+                    desiredAccuracy: LocationAccuracy.high);
+                ref.read(markersProvider.notifier).animateCamera(
+                    LatLng(position.latitude, position.longitude));
+              }
             },
             child: Container(
               padding: const EdgeInsets.all(10),
@@ -88,9 +100,8 @@ class _MapViewState extends ConsumerState<MapView> {
             onTap: (latLng) {},
             zoomControlsEnabled: false,
             markers: markers,
-            onMapCreated: (GoogleMapController controller) {
-              mapsController = controller;
-            },
+            onMapCreated: (controller) =>
+                ref.read(markersProvider.notifier).initController(controller),
           ),
           Positioned(
             right: 20,
@@ -115,23 +126,7 @@ class _MapViewState extends ConsumerState<MapView> {
                 ),
                 const SizedBox(height: 20),
                 GestureDetector(
-                  onTap: () async {
-                    if (mapsController != null) {
-                      var currentZoomLevel =
-                          await mapsController.getZoomLevel();
-                      // final coord = await mapsController!.getVisibleRegion();
-
-                      currentZoomLevel = currentZoomLevel + 2;
-                      // await mapsController!.animateCamera(
-                      //   CameraUpdate.newCameraPosition(
-                      //     CameraPosition(
-                      //       target: LatLng(coord.),
-                      //       zoom: currentZoomLevel,
-                      //     ),
-                      //   ),
-                      // );
-                    }
-                  },
+                  onTap: () async {},
                   child: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(

@@ -4,6 +4,7 @@ import 'package:angelswing_dev_test/feature/infrastructure/infrastructure.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_item.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_status_notifier.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/map_view.dart';
+import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen>
     with WidgetsBindingObserver {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -67,7 +69,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
             ref.read(drawerStatusProvider.notifier).changeStatus(status),
         key: _scaffoldKey,
         drawer: Drawer(
-          backgroundColor: Colors.transparent.withOpacity(.2),
+          backgroundColor: Colors.grey.withOpacity(.7),
           child: Consumer(
             builder: (context, ref, child) {
               final state = ref.watch(getAllLocationController);
@@ -91,19 +93,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   },
                 ),
                 success: (s) {
-                  final data = s.data as Locationresponse;
-
+                  final data = ref.watch(markersProvider).listLocations;
                   return ListView.builder(
-                    itemCount: data.locations.length,
+                    itemCount: data.length,
                     itemBuilder: (context, index) {
-                      final item = data.locations[index];
+                      final item = data[index];
                       return ProviderScope(
                         overrides: [
                           drawerItemSettingPro.overrideWithValue(
                             DrawerItemSetting(
                               title: 'Location ${index + 1}',
-                              lat: item[0].toString(),
-                              lng: item[1].toString(),
+                              latLng: item,
+                              isLastItem: index == data.length - 1,
                             ),
                           ),
                         ],

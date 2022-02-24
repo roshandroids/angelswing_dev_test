@@ -27,12 +27,7 @@ class LocationController<T> extends StateNotifier<BaseState> {
       _read(locationRepositoryProvider);
   MarkersProvider get _markersProvider => _read(markersProvider);
 
-  Future<void> getLocations({
-    String? keyword,
-    bool isActive = true,
-    int? skipCount,
-    int? maxResultCount,
-  }) async {
+  Future<void> getLocations() async {
     state = const BaseState<void>.loading();
     final data = await _locationRepository.getLocations();
     state = data.fold(
@@ -40,6 +35,8 @@ class LocationController<T> extends StateNotifier<BaseState> {
         return BaseState<Failure>.error(failure.reason);
       },
       (data) {
+        final latLngList =
+            data.locations.map((e) => LatLng(e[0], e[1])).toList();
         final markers = data.locations
             .map(
               (e) => Marker(
@@ -48,8 +45,9 @@ class LocationController<T> extends StateNotifier<BaseState> {
               ),
             )
             .toSet();
-        _markersProvider.updateMarkersList(markers);
-        return BaseState<Locationresponse>.success(data: data);
+        _markersProvider.updateMarkersList(markers, latLngList);
+
+        return BaseState<List<LatLng>>.success(data: latLngList);
       },
     );
   }
