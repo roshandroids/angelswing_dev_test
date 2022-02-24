@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_void_async
 
+import 'package:angelswing_dev_test/core/utils/consts.dart';
 import 'package:angelswing_dev_test/core/utils/permission/permission_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +15,10 @@ final permissionStatusProvider =
 class PermissionStatusProvider extends ChangeNotifier {
   bool hasPermission = false;
   Position? position;
-  CameraPosition? currentPosition;
+  CameraPosition currentPosition = const CameraPosition(
+    zoom: 16,
+    target: initialLocation,
+  );
 
   void checkPermission(BuildContext context) async {
     final status = await PermissionChecker.hasLocationPermission(context);

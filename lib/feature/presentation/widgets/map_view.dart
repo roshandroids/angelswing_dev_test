@@ -106,19 +106,17 @@ class _MapViewState extends ConsumerState<MapView> {
                     final _mapController =
                         ref.read(markersProvider).mapsController;
 
-                    if (currentFocus != null) {
-                      final currentZoomLevel =
-                          await _mapController.getZoomLevel();
+                    final currentZoomLevel =
+                        await _mapController.getZoomLevel();
 
-                      await _mapController.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: currentFocus.target,
-                            zoom: currentZoomLevel + .5,
-                          ),
+                    await _mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: currentFocus.target,
+                          zoom: currentZoomLevel + .5,
                         ),
-                      );
-                    }
+                      ),
+                    );
                   },
                   icon: const Icon(Entypo.plus, color: Colors.white),
                   color: const Color(
@@ -131,19 +129,17 @@ class _MapViewState extends ConsumerState<MapView> {
                     final _mapController =
                         ref.read(markersProvider).mapsController;
 
-                    if (currentFocus != null) {
-                      final currentZoomLevel =
-                          await _mapController.getZoomLevel();
+                    final currentZoomLevel =
+                        await _mapController.getZoomLevel();
 
-                      await _mapController.animateCamera(
-                        CameraUpdate.newCameraPosition(
-                          CameraPosition(
-                            target: currentFocus.target,
-                            zoom: currentZoomLevel - .5,
-                          ),
+                    await _mapController.animateCamera(
+                      CameraUpdate.newCameraPosition(
+                        CameraPosition(
+                          target: currentFocus.target,
+                          zoom: currentZoomLevel - .5,
                         ),
-                      );
-                    }
+                      ),
+                    );
                   },
                   icon: const Icon(Entypo.minus, color: Colors.white),
                   color: const Color(0xff3F4447),
