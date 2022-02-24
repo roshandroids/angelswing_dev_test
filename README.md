@@ -70,4 +70,4 @@ Navigate to [code repository](https://github.com/roshandroids/angelswing_dev_tes
 
 ##### Build :
 
-- Follow thus link to download [android apk](https://drive.google.com/file/d/1orM9dzFlxjbNTqP6sCjVPKclXmgRA2av/view?usp=sharing).
+- Follow this link to download [android apk](https://drive.google.com/file/d/1orM9dzFlxjbNTqP6sCjVPKclXmgRA2av/view?usp=sharing).
