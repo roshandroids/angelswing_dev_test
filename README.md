@@ -38,8 +38,7 @@ Before running this project make sure to configure the following tools and API's
 
 - [google_maps_flutter: ^2.1.1](https://pub.dev/packages/google_maps_flutter)
 - [geolocator: ^8.2.0](https://pub.dev/packages/geolocator)
-- [freezed: ^1.1.1](https://pub.dev/packages/freezed)
-- [json_annotation: ^4.4.0](https://pub.dev/packages/json_annotation)
+
 
 ###### Local storage :
 
