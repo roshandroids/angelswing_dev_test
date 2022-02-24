@@ -1,6 +1,5 @@
 import 'package:angelswing_dev_test/core/utils/permission/permission_status_provider.dart';
 import 'package:angelswing_dev_test/feature/application/application.dart';
-import 'package:angelswing_dev_test/feature/infrastructure/infrastructure.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_item.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/drawer_status_notifier.dart';
 import 'package:angelswing_dev_test/feature/presentation/widgets/map_view.dart';

@@ -1,10 +1,9 @@
 // ignore_for_file: lines_longer_than_80_chars
 
+import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
-import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 
 ///  Drawer Item provider
 final drawerItemSettingPro = Provider<DrawerItemSetting?>((ref) => null);
