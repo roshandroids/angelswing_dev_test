@@ -1,3 +1,5 @@
+// ignore_for_file: lines_longer_than_80_chars
+
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -47,7 +49,6 @@ class PermissionDialog extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 22),
-                // ignore: lines_longer_than_80_chars
                 child: Text(
                   'Your location is currently disabled.To locate you in the map we need your current location. Set it from here of provide location service from setting.',
                   style: Theme.of(context).textTheme.bodyText1?.copyWith(

@@ -13,6 +13,7 @@ class PermissionStatusProvider extends ChangeNotifier {
   bool hasPermission = false;
 
   void checkPermission(BuildContext context) async {
+    notifyListeners();
     final status = await PermissionChecker.hasLocationPermission(context);
     hasPermission = status;
     notifyListeners();

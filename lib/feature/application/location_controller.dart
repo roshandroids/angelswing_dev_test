@@ -1,7 +1,9 @@
 import 'package:angelswing_dev_test/core/core.dart';
 import 'package:angelswing_dev_test/feature/infrastructure/infrastructure.dart';
+import 'package:angelswing_dev_test/feature/presentation/widgets/markers_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 final getAllLocationController =
     StateNotifierProvider<LocationController, BaseState>(locationController);
@@ -23,6 +25,7 @@ class LocationController<T> extends StateNotifier<BaseState> {
 
   ILocationRepository get _locationRepository =>
       _read(locationRepositoryProvider);
+  MarkersProvider get _markersProvider => _read(markersProvider);
 
   Future<void> getLocations({
     String? keyword,
@@ -37,6 +40,15 @@ class LocationController<T> extends StateNotifier<BaseState> {
         return BaseState<Failure>.error(failure.reason);
       },
       (data) {
+        final markers = data.locations
+            .map(
+              (e) => Marker(
+                markerId: MarkerId('${e[0]},${e[1]}'),
+                position: LatLng(e[0], e[1]),
+              ),
+            )
+            .toSet();
+        _markersProvider.updateMarkersList(markers);
         return BaseState<Locationresponse>.success(data: data);
       },
     );
