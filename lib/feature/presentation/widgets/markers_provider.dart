@@ -19,12 +19,14 @@ class MarkersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Update markers in map with lat & long received from api
   void updateMarkersList(Set<Marker> value, List<LatLng> locs) {
     markers = value;
     listLocations = locs;
     notifyListeners();
   }
 
+  /// Add user's location to the list with location data received from api
   void addLocation(LatLng latLng) {
     if (!listLocations.contains(latLng)) {
       listLocations.add(latLng);
@@ -33,6 +35,7 @@ class MarkersProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Move camera focus to selected lat & long
   void animateCamera(LatLng latLng) {
     mapsController.animateCamera(
       CameraUpdate.newCameraPosition(

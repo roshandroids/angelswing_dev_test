@@ -20,6 +20,7 @@ class PermissionStatusProvider extends ChangeNotifier {
     target: initialLocation,
   );
 
+  /// Check for location permission and request
   void checkPermission(BuildContext context) async {
     final status = await PermissionChecker.hasLocationPermission(context);
 
@@ -27,6 +28,7 @@ class PermissionStatusProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Get current location with lat & long
   Future<Position?> getLocation(BuildContext context) async {
     final status = await PermissionChecker.hasLocationPermission(context);
     if (status) {
@@ -42,6 +44,7 @@ class PermissionStatusProvider extends ChangeNotifier {
     }
   }
 
+  /// Update center location
   void updateFocus(CameraPosition position) async {
     currentPosition = position;
     notifyListeners();

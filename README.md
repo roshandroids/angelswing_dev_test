@@ -63,3 +63,7 @@ Navigate to [code repository](https://github.com/roshandroids/angelswing_dev_tes
 - To add `Google Map Api Key` for `android` navigate to `android > app > src > main > res > values > keys.xml` and add your key. And for `iOS` navigate to `ios > runner > AppDelegate.swift` and add your key.
 - Start your device i.e `Android Emulator` or `iOS Simulator` or `Physical Device`.
 - Open terminal and run `Flutter run` command to build your project.
+
+##### Video Snippet :
+
+- Follow this link to [watch video](https://youtu.be/VYqBhu_Ie38).

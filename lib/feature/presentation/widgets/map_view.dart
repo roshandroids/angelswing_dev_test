@@ -109,6 +109,7 @@ class _MapViewState extends ConsumerState<MapView> {
                     final currentZoomLevel =
                         await _mapController.getZoomLevel();
 
+                    /// Update camera position with new location data
                     await _mapController.animateCamera(
                       CameraUpdate.newCameraPosition(
                         CameraPosition(

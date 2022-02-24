@@ -46,6 +46,7 @@ class LocationController<T> extends StateNotifier<BaseState> {
               ),
             )
             .toSet();
+
         _markersProvider.updateMarkersList(markers, latLngList);
 
         return BaseState<List<LatLng>>.success(data: latLngList);
